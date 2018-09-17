@@ -1,0 +1,34 @@
+<html>
+<body>
+<div>
+    <h2>What is it?</h2>
+    <p>A thing I threw together to search beatsaver</p>
+    <h2>Hows it work?</h2>
+    <p>1. Scheduled lambda job grabs data off beatsaver, throws it into a postgresql db</p>
+    <p>Then when a user comes along, S3 bucket serves the static webpages, which consume an aws api connected with another
+        lambda function that queries the data in the DB.
+    </p>
+    <p>If you understood that, well done.</p>
+    <p>My questionable code <a href="https://github.com/Zeekin/beatsaver-search">is viewable on github</a>. It's probably really terrible.</p>
+    <h2>Who dunnit?</h2>
+    <p>Find me on beatsaber discord - Zeekin#1824</p>
+    <h2>Why'd I do it?</h2>
+    <ul>
+        <li>Tired of seeing the same shit at the top of beatsaver</li>
+        <li>No proper ways of searching for beatsaver songs currently (AFAIK)</li>
+        <li>Self learning</li>
+        <li>Fun</li>
+        <li><a href="#" onclick="return false;" id="fuckhaters">To prove the haters wrong</a></li>
+    </ul>
+    <div id="hater" style="display:none">
+        <img src="fuckthehaters.png">
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script>
+    $('#fuckhaters').click(function(){
+        $('#hater').toggle();
+    });
+</script>
+</body>
+</html>

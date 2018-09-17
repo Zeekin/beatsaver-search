@@ -1,0 +1,197 @@
+<html>
+<!--
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+-->
+<script type="application/javascript">
+    var request = new XMLHttpRequest();
+
+    function formatParams( params ){
+      return "?" + Object
+            .keys(params)
+            .map(function(key){
+              return key+"="+encodeURIComponent(params[key])
+            })
+            .join("&")
+    }
+
+    params = sessionStorage.getItem('params')
+
+    jsonparams = $.parseJSON(params);
+
+    formatted_params = formatParams(jsonparams)
+
+    alert(formatted_params)
+
+    var request_url = 'https://445z5zpkmd.execute-api.ap-southeast-2.amazonaws.com/beta/my-songs' + formatted_params
+
+    request.open('GET', request_url, true);
+    request.onload = function () {
+
+      // Begin accessing JSON data here
+      var data = JSON.parse(this.response);
+
+      const songs = document.getElementById('songs');
+
+      if(data.length == 0){
+
+          const heading = document.createElement('h1')
+          heading.textContent = "No Results Found"
+          songs.appendChild(heading)
+
+      }
+
+      const resultcount = document.getElementById('resultcount');
+      resultcount.textContent = data.length + " Results"
+
+
+      if (request.status >= 200 && request.status < 400) {
+        data.forEach(song => {
+
+        const row = document.createElement('div');
+        row.setAttribute('class', 'row');
+
+        // create the content in the first column
+
+        const col_1 = document.createElement('div');
+        col_1.setAttribute('class','col-2');
+        col_1.setAttribute('style','text-align: center');
+
+        // create cover object
+
+        const cover = document.createElement('img');
+        cover.src = song.coverurl;
+        cover.setAttribute('width','100%')
+        col_1.appendChild(cover);
+        col_1.appendChild(document.createElement('hr'));
+
+        // create download button object
+
+        const dlbtn = document.createElement('a')
+        dlbtn.setAttribute('type','button')
+        dlbtn.setAttribute('href',song.downloadurl)
+        dlbtn.setAttribute('class','btn btn-link')
+        dlbtn.textContent = 'Download'
+
+        col_1.appendChild(dlbtn)
+
+        row.appendChild(col_1)
+
+        // create the second column
+
+        const col_2 = document.createElement('div');
+        col_2.setAttribute('class','col');
+
+        // Add the songname
+
+        const songname = document.createElement('h2')
+        songname.textContent = song.songname + '  '
+        col_2.append(songname)
+
+        // Add the difficulty
+
+        const difficulty = document.createElement('span')
+        difficulty.setAttribute('class','badge badge-secondary')
+        difficulty.textContent = song.difficulty
+        songname.appendChild(difficulty)
+
+
+        // Add the songsubname
+
+        const songsubname = document.createElement('h5')
+        songsubname.textContent = song.songsubname
+        col_2.append(songsubname)
+
+        col_2.append(document.createElement('hr'))
+
+
+        // Add the author
+        const author = document.createElement('p')
+        author.textContent = 'Mapped by: ' + song.author
+        col_2.appendChild(author)
+
+        // Add the difficulty rating
+        // TODO: Make this look good
+
+        const difficultyrating = document.createElement('p')
+        difficultyrating.textContent = 'Difficulty Rating: ' + song.difficultyrating
+        col_2.append(difficultyrating)
+
+        // create inner row
+
+        const innerrow = document.createElement('div')
+        innerrow.setAttribute('class','row')
+
+        // Add popularity rating
+
+        const popularityrating = document.createElement('div')
+        popularityrating.setAttribute('class','col')
+        const prp = document.createElement('p')
+        prp.textContent = 'Popularity Rating: ' + song.popularityratingovertime
+        popularityrating.appendChild(prp)
+        innerrow.appendChild(popularityrating)
+
+        // Add completion ratio
+
+        const completionratio = document.createElement('div')
+        completionratio.setAttribute('class','col')
+        const crp = document.createElement('p')
+        crp.textContent = 'Completion Ratio: ' + song.completionratio
+        completionratio.appendChild(crp)
+        innerrow.appendChild(completionratio)
+
+        // Add up/down votes
+
+        const updownvotes = document.createElement('div')
+        updownvotes.setAttribute('class','col')
+        const udvp = document.createElement('p')
+        udvp.textContent = 'Upvotes: ' + song.upvotes + ' | Downvotes: ' + song.downvotes
+        updownvotes.appendChild(udvp)
+        innerrow.appendChild(updownvotes)
+
+        // Add days old
+
+        const daysold = document.createElement('div')
+        daysold.setAttribute('class','col')
+        const dop = document.createElement('p')
+        dop.textContent = 'Days Old: ' + song.daysold
+        daysold.appendChild(dop)
+        innerrow.appendChild(daysold)
+
+
+        col_2.appendChild(innerrow)
+
+        // Add the 2nd column to the row
+
+        row.appendChild(col_2)
+
+        // add the row to the songs div
+
+        songs.appendChild(row)
+        songs.appendChild(document.createElement('hr'))
+
+
+
+
+        });
+      } else {
+        console.log('error');
+      }
+    }
+
+    request.send();
+</script>
+
+<body>
+<div class="container">
+    <div class="card">
+        <div id="resultcount" class="card-header">Results</div>
+        <div id="songs" class="card-body">
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,17 +1,7 @@
-import time
 import datetime
-import codecs
-import requests
-import json
-from lxml import html
-from requests.auth import HTTPBasicAuth
 from datetime import datetime
 
-
-
-
 class BeatSaverSong():
-
 
     def __init__(self, id, key, name, description, uploader, uploaderid, songname, songsubname, author, bpm,
                  downloadcount, finishedcount, upvotes, downvotes, detailurl, downloadurl,creationdate, coverurl, difficulty,
@@ -23,7 +13,7 @@ class BeatSaverSong():
         self.uploader = uploader
         self.uploaderid = uploaderid
         self.songname = songname
-        self.songsubname = songsubname,
+        self.songsubname = songsubname
         self.author = author
         self.bpm = bpm
         self.downloadcount = downloadcount
@@ -42,20 +32,27 @@ class BeatSaverSong():
         self.notes = notes
         self.creationdate = creationdate
         self.obstacles = obstacles
+        self.completionratio = self.completion_ratio()
         self.daysold = self.age_in_days()
         self.songlength = self.song_length()
         self.difficultyrating = self.difficulty_rating()
         self.popularityrating = self.popularity_rating()
-        self.popularityratingovertime = self.populatiry_rating_over_time()
-        self.completionratio = self.completion_ratio()
+        self.popularityratingovertime = self.popularitry_rating_over_time()
+
 
     def song_length(self):
-        return self.time / self.bpm * 60
+        if self.bpm == 0:
+            return 0
+        else:
+            return self.time / self.bpm * 60
 
     def difficulty_rating(self):
-        totalnotes = self.notes - self.dotnotes + (self.dotnotes/4)
+        if self.songlength == 0:
+            return 0
 
-        difficultyrating = round(totalnotes / self.songlength,2)
+        totalnotes = self.notes - self.dotnotes
+
+        difficultyrating = round(totalnotes / self.songlength * (1-self.completionratio),2)
 
         return difficultyrating
 
@@ -72,12 +69,12 @@ class BeatSaverSong():
         else:
             return days
 
-    def populatiry_rating_over_time(self):
+    def popularitry_rating_over_time(self):
         upvotes = 5 + self.upvotes
         downvotes = 5 + self.downvotes
         rating = upvotes / downvotes
 
-        return rating / self.daysold * 10
+        return rating
 
     def popularity_rating(self):
         upvotes = 5 + self.upvotes
@@ -87,6 +84,9 @@ class BeatSaverSong():
         return rating
 
     def completion_ratio(self):
-        return self.finishedcount / self.downloadcount
+        if self.downloadcount == 0:
+            return 0
+        else:
+            return self.finishedcount / self.downloadcount
 
 

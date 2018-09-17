@@ -1,3 +1,257 @@
 <html>
-<T1>Hello World</T1>
+<head>
+    <link rel="stylesheet" href="css/bootstrap.css">
+<style>
+.row-pad {
+    margin-bottom: 10px;
+    padding-right:15px;
+}
+.container {
+    padding-top: 15px
+}
+
+</style>
+</head>
+
+
+
+<body>
+
+<!-- Button trigger modal -->
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Why'd you dewit?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h3>Self learning, fun & to prove the haters wrong.</h3>
+                <img src="fuckthehaters.png" style="width:100%">
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href=".">Beatsaver Search</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarText">
+        <ul class="navbar-nav mr-auto">
+            <li>
+                <div class="card text-white bg-danger">
+                    <div class="card-header">ALPHA</div>
+                </div>
+            </li>
+            <li>
+                <div class="card text-white bg-info">
+                    <div class="card-header">Search for beatsaver songs based on difficulty rating, popularity and eventually more!</div>
+                </div>
+
+            </li>
+
+        </ul>
+        <a id="about" href="#" onclick="return false;" class="navbar-brand" style="color:white">
+      About
+    </a>
+    </div>
+</nav>
+
+
+<div id="container" class="container">
+
+
+
+<form action="javascript:void(0);">
+    <div class="row row-pad">
+        <label style="text-align: right" class="col-md-2">Song Name:</label>
+        <input id="songname" class="col-md" type="text" placeholder="Intergalactic">
+    </div>
+
+    <div class="row row-pad">
+        <label style="text-align: right" class="col-md-2">Song Sub Name:</label>
+        <input id="songsubname" class="col-md" type="text" placeholder="Beastie Boys">
+    </div>
+
+    <div class="row row-pad">
+        <label style="text-align: right" class="col-md-2">Author:</label>
+        <input id="author" class="col-md" type="text" placeholder="Zeekin">
+    </div>
+ <!--   <div class="row row-pad">
+        <label style="text-align: right" class="col-md-2">Difficulty:</label>
+        <select id="difficulty" class="col-md-3">
+            <option value="any">Any</option>
+            <option value="easy">Easy</option>
+            <option value="normal">Normal</option>
+            <option value="hard">Hard</option>
+            <option value="expert">Expert</option>
+            <option value="expertplus">ExpertPlus</option>
+        </select>
+    </div> -->
+    <hr>
+    <div class="row row-pad">
+        <div class="col-md-2"></div>
+        <div class="col-md" style="text-align: left;padding:0"><h4>Difficulty Rating</h4></div>
+
+
+    </div>
+    <div class="row row-pad">
+        <label style="text-align: right" class="col-md-2">Minimum</label>
+
+        <input id="mindifficultyrating" class="col-md-1" type="text" placeholder="0">
+        <label style="text-align: right" class="col-md-1">Maximum:</label>
+        <input id="maxdifficultyrating" class="col-md-1" type="text" placeholder="20">
+    </div>
+    <hr>
+    <div class="row row-pad">
+        <div class="col-md-2"></div>
+        <div class="col-md" style="text-align: left;padding:0"><h4>Map Age</h4></div>
+
+
+    </div>
+    <div class="row row-pad">
+        <label style="text-align: right" class="col-md-2">At most</label>
+        <input id="daysold" class="col-md-1" type="text" placeholder="0">
+        <label style="text-align: left" class="col-md-2">days old.</label>
+    </div>
+    <hr>
+    <div class="row row-pad">
+        <label style="text-align: right" class="col-md-2">Order By:</label>
+        <div  style="padding:0" class="col-md-2">
+            <select id="orderby">
+                <option value="popularityratingovertime">Popularity Rating</option>
+                <option value="difficultyrating">Difficulty Rating</option>
+            </select>
+
+        </div>
+        <input style="margin-left:10px" id="completed" type="checkbox"><label style="margin-left:10px">Completed by at least 1 player</label>
+    </div>
+    <div class="row row-pad">
+        <div class="col-md-2"></div>
+        <button class="col-md" id="search">Search</button>
+    </div>
+</form>
+
+
+
+<!--    <div>
+        <button id="dothis">dothisinstead</button>
+    </div> -->
+    <div id="content">
+        <div class="card">
+            <div class="card-header">Results</div>
+            <div class="card-body">
+                No Results.... Yet.
+            </div>
+        </div>
+    </div>
+
+
+
+
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="js/bootstrap.js"></script>
+<script>
+
+$(document).ready(function(){
+
+   $( "#completed" ).prop( "checked", true );
+
+   $("#about").click(function(){
+       $.ajax({
+            url: "about.html",
+            success: function(result){
+            $("#container").html(result);
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+            $("#container").html(xhr.responseText)
+          }
+        });
+   });
+
+   $("#search").click(function(){
+
+        alert("searching!")
+
+        params = {}
+
+        if($('#songname').val()){
+            params['songname'] = $('#songname').val()
+        }
+        if($('#songsubname').val()){
+            params['songsubname'] = $('#songsubname').val()
+        }
+        if($('#author').val()){
+            params['author'] = $('#author').val()
+        }
+        if($('#mindifficultyrating').val()){
+            params['mindifficultyrating'] = $('#mindifficultyrating').val()
+        }
+        if($('#maxdifficultyrating').val()){
+            params['maxdifficultyrating'] = $('#maxdifficultyrating').val()
+        }
+        if($('#daysold').val()){
+            params['daysold'] = $('#daysold').val()
+        }
+        if($('#orderby').val()){
+            params['orderby'] = $('#orderby').val()
+            params['order'] = 'desc'
+        }
+        if($('#completed:checkbox:checked').length > 0){
+            params['completed'] = 'yes'
+        } else {
+            params['completed'] = 'no'
+        }
+
+
+        sessionStorage.setItem('params', JSON.stringify(params));
+
+        $.ajax({
+            url: "songs.html",
+            success: function(result){
+            $("#content").html(result);
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+            $("#content").html(xhr.responseText)
+          }
+        });
+
+
+
+
+   });
+
+
+   $("#dothis").click(function(){
+        $.ajax({
+            url: "songs.html",
+            success: function(result){
+            $("#content").html(result);
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+            $("#content").html(xhr.responseText)
+          }
+        });
+    });
+
+});
+
+</script>
+</body>
+
+
 </html>
