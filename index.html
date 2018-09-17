@@ -1,13 +1,15 @@
 <html>
 <head>
     <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 <style>
 .row-pad {
     margin-bottom: 10px;
     padding-right:15px;
 }
 .container {
-    padding-top: 15px
+    padding-top: 15px;
+    max-width: 1600px;
 }
 
 </style>
@@ -17,31 +19,8 @@
 
 <body>
 
-<!-- Button trigger modal -->
-
-
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Why'd you dewit?</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <h3>Self learning, fun & to prove the haters wrong.</h3>
-                <img src="fuckthehaters.png" style="width:100%">
-            </div>
-
-        </div>
-    </div>
-</div>
-
-
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href=".">Beatsaver Search</a>
+    <a class="navbar-brand" href=".">Bootleg Beatsaver Search</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -55,7 +34,7 @@
             </li>
             <li>
                 <div class="card text-white bg-info">
-                    <div class="card-header">Search for beatsaver songs based on difficulty rating, popularity and eventually more!</div>
+                    <div class="card-header">Search for beatsaver songs based on difficulty rating, popularity and (maybe) eventually more!</div>
                 </div>
 
             </li>
@@ -70,22 +49,45 @@
 
 <div id="container" class="container">
 
+<div class="row">
+    <div class="col-md-2">
+        <div class="card">
+            <div class="card-header">Suggested Searches</div>
+            <div class="card-body">
+                <a href="#" id="popularnewreleases" onclick="return false;"><i class="fas fa-fire"></i>&nbsp;Popular New-Releases</a>
+                <hr>
+                <a href="#" id="neweasymaps" onclick="return false;"><i class="far fa-smile"></i>&nbsp;Easy New-Releases</a>
+                <hr>
+                <a href="#" id="newmoderatemaps" onclick="return false;"><i class="far fa-meh"></i>&nbsp;Moderate New-Releases</a>
+                <hr>
+                <a href="#" id="newhardmaps" onclick="return false;"><i class="far fa-angry"></i>&nbsp;Hard New-Releases</a>
+                <hr>
+                <a href="#" id="newinsanemaps" onclick="return false;"><i class="fas fa-skull"></i>&nbsp;Insane New-Releases</a>
+                <hr>
+                <a href="#" id="zeekin" onclick="return false;"><i class="fas fa-check"></i>&nbsp;Zeekin's Picks</a>
+                <hr>
+                <a href="#" id="alltimepopular" onclick="return false;"><i class="fab fa-gripfire"></i>&nbsp;All-Time Most Popular</a>
+                <hr>
+                <a href="#" id="alltimedifficult" onclick="return false;"><i class="fas fa-bomb"></i>&nbsp;All-Time Most Difficult</a>
 
-
+            </div>
+        </div>
+    </div>
+<div class="col-md">
 <form action="javascript:void(0);">
     <div class="row row-pad">
         <label style="text-align: right" class="col-md-2">Song Name:</label>
-        <input id="songname" class="col-md" type="text" placeholder="Intergalactic">
+        <input id="songname" class="col-md" type="text" placeholder="Example: Intergalactic">
     </div>
 
     <div class="row row-pad">
         <label style="text-align: right" class="col-md-2">Song Sub Name:</label>
-        <input id="songsubname" class="col-md" type="text" placeholder="Beastie Boys">
+        <input id="songsubname" class="col-md" type="text" placeholder="Example: Beastie Boys">
     </div>
 
     <div class="row row-pad">
         <label style="text-align: right" class="col-md-2">Author:</label>
-        <input id="author" class="col-md" type="text" placeholder="Zeekin">
+        <input id="author" class="col-md" type="text" placeholder="Example: Zeekin">
     </div>
  <!--   <div class="row row-pad">
         <label style="text-align: right" class="col-md-2">Difficulty:</label>
@@ -101,7 +103,9 @@
     <hr>
     <div class="row row-pad">
         <div class="col-md-2"></div>
-        <div class="col-md" style="text-align: left;padding:0"><h4>Difficulty Rating</h4></div>
+        <div class="col-md" style="text-align: left;padding:0"><h4>Difficulty Rating&nbsp;&nbsp;
+            <i class="fas fa-question-circle" data-toggle="tooltip" data-placement="bottom" title="(Notecount - Dotnotes) / Song Length (seconds) * (1 - Player Completion Percentage)"></i>
+        </h4></div>
 
 
     </div>
@@ -111,6 +115,21 @@
         <input id="mindifficultyrating" class="col-md-1" type="text" placeholder="0">
         <label style="text-align: right" class="col-md-1">Maximum:</label>
         <input id="maxdifficultyrating" class="col-md-1" type="text" placeholder="20">
+    </div>
+    <hr>
+    <div class="row row-pad">
+        <div class="col-md-2"></div>
+        <div class="col-md" style="text-align: left;padding:0"><h4>Popularity Rating&nbsp;&nbsp;
+            <i class="fas fa-question-circle" data-toggle="tooltip" data-placement="bottom" title="(Upvotes + 5) / (Downvotes + 5)"></i></h4></div>
+
+
+    </div>
+    <div class="row row-pad">
+        <label style="text-align: right" class="col-md-2">Minimum</label>
+
+        <input id="minpopularityrating" class="col-md-1" type="text" placeholder="0">
+        <label style="text-align: right" class="col-md-1">Maximum:</label>
+        <input id="maxpopularityrating" class="col-md-1" type="text" placeholder="100">
     </div>
     <hr>
     <div class="row row-pad">
@@ -129,35 +148,42 @@
         <label style="text-align: right" class="col-md-2">Order By:</label>
         <div  style="padding:0" class="col-md-2">
             <select id="orderby">
-                <option value="popularityratingovertime">Popularity Rating</option>
+                <option value="popularityrating">Popularity Rating</option>
                 <option value="difficultyrating">Difficulty Rating</option>
+                <option value="daysold">Days Old</option>
             </select>
-
         </div>
+        <label style="text-align: right" class="col-md-1">Order:</label>
+        <div  class="col-md-2">
+            <select id="order">
+                <option value="desc">Descending</option>
+                <option value="asc">Ascending</option>
+            </select>
+        </div>
+        <div class="col-md-4">
         <input style="margin-left:10px" id="completed" type="checkbox"><label style="margin-left:10px">Completed by at least 1 player</label>
+        </div>
     </div>
     <div class="row row-pad">
         <div class="col-md-2"></div>
         <button class="col-md" id="search">Search</button>
     </div>
 </form>
+</div>
+</div>
 
-
-
-<!--    <div>
-        <button id="dothis">dothisinstead</button>
-    </div> -->
     <div id="content">
         <div class="card">
             <div class="card-header">Results</div>
+
             <div class="card-body">
-                No Results.... Yet.
+
+                <p>No Results.... Yet.</p>
+
             </div>
+
         </div>
     </div>
-
-
-
 
 </div>
 
@@ -167,8 +193,101 @@
 <script src="js/bootstrap.js"></script>
 <script>
 
+
+function scrubinputs(){
+    $('#songname').val("")
+    $('#songsubname').val("")
+    $('#author').val("")
+    $('#mindifficultyrating').val("")
+    $('#maxdifficultyrating').val("")
+    $('#minpopularityrating').val("")
+    $('#maxpopularityrating').val("")
+    $('#daysold').val("")
+    $('#order').val("desc")
+    $('#orderby').val("popularityrating")
+    $( "#completed" ).prop( "checked", true );
+}
+
+
+
 $(document).ready(function(){
 
+    $('#popularnewreleases').click(function(){
+        scrubinputs()
+        $('#minpopularityrating').val("3.5")
+        $('#daysold').val("10")
+        $('#search').trigger("click")
+    });
+
+    $('#neweasymaps').click(function(){
+        scrubinputs()
+        $('#minpopularityrating').val("1")
+        $('#daysold').val("10")
+        $('#maxdifficultyrating').val("3")
+        $('#orderby').val("difficultyrating")
+        $('#order').val("asc")
+        $('#search').trigger("click")
+    });
+
+    $('#newmoderatemaps').click(function(){
+        scrubinputs()
+        $('#minpopularityrating').val("1")
+        $('#daysold').val("10")
+        $('#mindifficultyrating').val("3")
+        $('#maxdifficultyrating').val("6")
+        $('#orderby').val("difficultyrating")
+        $('#order').val("asc")
+        $('#search').trigger("click")
+    });
+
+    $('#newhardmaps').click(function(){
+        scrubinputs()
+        $('#minpopularityrating').val("1")
+        $('#daysold').val("10")
+        $('#mindifficultyrating').val("6")
+        $('#maxdifficultyrating').val("10")
+        $('#orderby').val("difficultyrating")
+        $('#order').val("asc")
+        $('#search').trigger("click")
+    });
+
+    $('#newinsanemaps').click(function(){
+        scrubinputs()
+        $('#minpopularityrating').val("1")
+        $('#daysold').val("10")
+        $('#mindifficultyrating').val("10")
+        $('#orderby').val("difficultyrating")
+        $('#order').val("asc")
+        $('#search').trigger("click")
+    });
+
+    $('#zeekin').click(function(){
+        scrubinputs()
+        $('#author').val("zeekin")
+        $('#orderby').val("difficultyrating")
+        $('#order').val("asc")
+        $('#search').trigger("click")
+    });
+
+    $('#alltimepopular').click(function(){
+        scrubinputs()
+        $('#minpopularityrating').val("9")
+        $('#orderby').val("popularityrating")
+        $('#order').val("desc")
+        $('#search').trigger("click")
+    });
+
+    $('#alltimedifficult').click(function(){
+        scrubinputs()
+        $('#mindifficultyrating').val("9")
+        $('#orderby').val("difficultyrating")
+        $('#order').val("desc")
+        $('#search').trigger("click")
+    });
+
+
+
+   $('[data-toggle="tooltip"]').tooltip()
    $( "#completed" ).prop( "checked", true );
 
    $("#about").click(function(){
@@ -184,8 +303,6 @@ $(document).ready(function(){
    });
 
    $("#search").click(function(){
-
-        alert("searching!")
 
         params = {}
 
@@ -204,12 +321,23 @@ $(document).ready(function(){
         if($('#maxdifficultyrating').val()){
             params['maxdifficultyrating'] = $('#maxdifficultyrating').val()
         }
+
+        if($('#minpopularityrating').val()){
+            params['minpopularityrating'] = $('#minpopularityrating').val()
+        }
+
+        if($('#maxpopularityrating').val()){
+            params['maxpopularityrating'] = $('#maxpopularityrating').val()
+        }
+
         if($('#daysold').val()){
             params['daysold'] = $('#daysold').val()
         }
         if($('#orderby').val()){
-            params['orderby'] = $('#orderby').val()
-            params['order'] = 'desc'
+            if($('#order').val()){
+                params['orderby'] = $('#orderby').val()
+                params['order'] = $('#order').val()
+            }
         }
         if($('#completed:checkbox:checked').length > 0){
             params['completed'] = 'yes'
@@ -219,6 +347,39 @@ $(document).ready(function(){
 
 
         sessionStorage.setItem('params', JSON.stringify(params));
+
+        // show loading bar
+        const card = document.createElement('div')
+        card.setAttribute('class','card')
+
+        const progressbar = document.createElement('div')
+        progressbar.setAttribute('class','progress-bar progress-bar-striped bg-info progress-bar-animated')
+        progressbar.setAttribute('style','width: 100%')
+
+        const progress = document.createElement('div')
+        progress.setAttribute('class','progress')
+
+        progress.appendChild(progressbar)
+
+        const cardbody = document.createElement('div')
+        cardbody.setAttribute('class','card-body')
+
+        const loadtxt = document.createElement('p')
+        loadtxt.textContent = "Attempting to load results..."
+
+        cardbody.appendChild(loadtxt)
+        cardbody.appendChild(progress)
+
+        const cardhead = document.createElement('div')
+        cardhead.setAttribute('class','card-header')
+        cardhead.textContent = "Getting Results"
+
+
+        card.appendChild(cardhead)
+        card.appendChild(cardbody)
+        document.getElementById("content").innerHTML = ""
+
+        content.appendChild(card)
 
         $.ajax({
             url: "songs.html",
@@ -235,22 +396,10 @@ $(document).ready(function(){
 
    });
 
-
-   $("#dothis").click(function(){
-        $.ajax({
-            url: "songs.html",
-            success: function(result){
-            $("#content").html(result);
-            },
-            error: function (xhr, ajaxOptions, thrownError) {
-            $("#content").html(xhr.responseText)
-          }
-        });
-    });
-
 });
 
 </script>
+
 </body>
 
 

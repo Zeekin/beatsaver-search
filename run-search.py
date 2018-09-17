@@ -50,6 +50,12 @@ def search_for_song_with_params(event, context):
         if 'maxdifficultyrating' in queryparams:
             queries.append("difficultyrating <= {}".format(queryparams['maxdifficultyrating']))
 
+        if 'minpopularityrating' in queryparams:
+            queries.append("popularityrating >= {}".format(queryparams['minpopularityrating']))
+
+        if 'maxpopularityrating' in queryparams:
+            queries.append("popularityrating <= {}".format(queryparams['maxpopularityrating']))
+
         if 'orderby' in queryparams and 'order' in queryparams:
             orderby = "order by {} {}".format(queryparams['orderby'],queryparams['order'])
 
@@ -65,7 +71,7 @@ def search_for_song_with_params(event, context):
 
 
     selectstatement = """
-            select songname,author,coverurl, difficulty, difficultyrating, downloadurl,popularityratingovertime,songsubname,upvotes,downvotes,completionratio,daysold from songs
+            select songname,author,coverurl, difficulty, difficultyrating, downloadurl,popularityrating,songsubname,upvotes,downvotes,completionratio,daysold from songs
             {}
             {}
         """.format(wherestatement,orderby)
@@ -80,7 +86,7 @@ def search_for_song_with_params(event, context):
             "difficulty" : song[3],
             "difficultyrating" : song[4],
             "downloadurl" : song[5],
-            "popularityratingovertime" : song[6],
+            "popularityrating" : song[6],
             "songsubname" : song[7],
             "upvotes" : song[8],
             "downvotes" : song[9],

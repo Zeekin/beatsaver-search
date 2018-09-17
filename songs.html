@@ -23,7 +23,7 @@
 
     formatted_params = formatParams(jsonparams)
 
-    alert(formatted_params)
+    // alert(formatted_params)
 
     var request_url = 'https://445z5zpkmd.execute-api.ap-southeast-2.amazonaws.com/beta/my-songs' + formatted_params
 
@@ -34,6 +34,7 @@
       var data = JSON.parse(this.response);
 
       const songs = document.getElementById('songs');
+      const songlist = document.createElement('div');
 
       if(data.length == 0){
 
@@ -48,6 +49,7 @@
 
 
       if (request.status >= 200 && request.status < 400) {
+
         data.forEach(song => {
 
         const row = document.createElement('div');
@@ -129,7 +131,7 @@
         const popularityrating = document.createElement('div')
         popularityrating.setAttribute('class','col')
         const prp = document.createElement('p')
-        prp.textContent = 'Popularity Rating: ' + song.popularityratingovertime
+        prp.textContent = 'Popularity Rating: ' + song.popularityrating
         popularityrating.appendChild(prp)
         innerrow.appendChild(popularityrating)
 
@@ -138,7 +140,7 @@
         const completionratio = document.createElement('div')
         completionratio.setAttribute('class','col')
         const crp = document.createElement('p')
-        crp.textContent = 'Completion Ratio: ' + song.completionratio
+        crp.textContent = 'Player Completion: ' + (Math.round(song.completionratio * 10000)/100) + '%'
         completionratio.appendChild(crp)
         innerrow.appendChild(completionratio)
 
@@ -147,7 +149,7 @@
         const updownvotes = document.createElement('div')
         updownvotes.setAttribute('class','col')
         const udvp = document.createElement('p')
-        udvp.textContent = 'Upvotes: ' + song.upvotes + ' | Downvotes: ' + song.downvotes
+        udvp.innerHTML = '<p><i class="fas fa-thumbs-up"></i>&nbsp;&nbsp;'+song.upvotes+'&nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-thumbs-down"></i>&nbsp;&nbsp;'+song.downvotes+'</p>'
         updownvotes.appendChild(udvp)
         innerrow.appendChild(updownvotes)
 
@@ -169,13 +171,13 @@
 
         // add the row to the songs div
 
-        songs.appendChild(row)
-        songs.appendChild(document.createElement('hr'))
-
-
-
-
+        songlist.appendChild(row)
+        songlist.appendChild(document.createElement('hr'))
         });
+
+        document.getElementById("songs").innerHTML = ""
+        songs.appendChild(songlist)
+
       } else {
         console.log('error');
       }
@@ -187,8 +189,12 @@
 <body>
 <div class="container">
     <div class="card">
-        <div id="resultcount" class="card-header">Results</div>
+        <div id="resultcount" class="card-header">Getting Results</div>
         <div id="songs" class="card-body">
+            <p>Attempting to load results...</p>
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped bg-info progress-bar-animated" style="width: 100%"></div>
+            </div>
         </div>
     </div>
 </div>
