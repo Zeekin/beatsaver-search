@@ -33,3 +33,14 @@ create table songs (
     CompletionRatio numeric(50,5),
     primary key (ID, Difficulty)
 );
+
+create table authorstats (
+    Author text,
+    TotalUpvotes int,
+    TotalDownvotes int,
+    ApprovalRating numeric(50,5),
+    NewestMapAge int,
+    MapCount int,
+    AvgMapVotes int,
+    primary key (Author)
+);

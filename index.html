@@ -28,8 +28,8 @@
     <div class="collapse navbar-collapse" id="navbarText">
         <ul class="navbar-nav mr-auto">
             <li>
-                <div class="card text-white bg-danger">
-                    <div class="card-header">ALPHA</div>
+                <div class="card text-white bg-primary">
+                    <div class="card-header">BETA</div>
                 </div>
             </li>
             <li>
@@ -38,8 +38,14 @@
                 </div>
 
             </li>
+            <li>
 
+
+            </li>
         </ul>
+        <div style="margin-right:50px" class="card text-white bg-success">
+            <div  class="card-header"><a style="color:white" href="./authors.html">*NEW* BeatMap Author Rankings</a></div>
+        </div>
         <a id="about" href="#" onclick="return false;" class="navbar-brand" style="color:white">
       About
     </a>
@@ -104,7 +110,7 @@
     <div class="row row-pad">
         <div class="col-md-2"></div>
         <div class="col-md" style="text-align: left;padding:0"><h4>Difficulty Rating&nbsp;&nbsp;
-            <i class="fas fa-question-circle" data-toggle="tooltip" data-placement="bottom" title="(Notecount - Dotnotes) / Song Length (seconds) * (1 - Player Completion Percentage)"></i>
+            <i class="fas fa-question-circle" data-toggle="tooltip" data-placement="bottom" title="(Notecount - Dotnotes) / Song Length (seconds) * (1 - (Player Completion Percentage * 0.33))"></i>
         </h4></div>
 
 
@@ -120,16 +126,16 @@
     <div class="row row-pad">
         <div class="col-md-2"></div>
         <div class="col-md" style="text-align: left;padding:0"><h4>Popularity Rating&nbsp;&nbsp;
-            <i class="fas fa-question-circle" data-toggle="tooltip" data-placement="bottom" title="(Upvotes + 5) / (Downvotes + 5)"></i></h4></div>
+            <i class="fas fa-question-circle" data-toggle="tooltip" data-placement="bottom" title="(Upvotes + 5) / (Upvotes + Downvotes + 10)"></i></h4></div>
 
 
     </div>
     <div class="row row-pad">
         <label style="text-align: right" class="col-md-2">Minimum</label>
 
-        <input id="minpopularityrating" class="col-md-1" type="text" placeholder="0">
+        <input id="minpopularityrating" class="col-md-1" type="text" placeholder="50">%
         <label style="text-align: right" class="col-md-1">Maximum:</label>
-        <input id="maxpopularityrating" class="col-md-1" type="text" placeholder="100">
+        <input id="maxpopularityrating" class="col-md-1" type="text" placeholder="100">%
     </div>
     <hr>
     <div class="row row-pad">
@@ -173,12 +179,13 @@
 </div>
 
     <div id="content">
+
         <div class="card">
             <div class="card-header">Results</div>
 
             <div class="card-body">
 
-                <p>No Results.... Yet.</p>
+                <p>No search results... Yet</p>
 
             </div>
 
@@ -192,6 +199,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 <script src="js/bootstrap.js"></script>
 <script>
+
+
 
 
 function scrubinputs(){
@@ -208,21 +217,29 @@ function scrubinputs(){
     $( "#completed" ).prop( "checked", true );
 }
 
-
+function copytxt(element) {
+  var $temp = $("<input>");
+  $("body").append($temp);
+  $temp.val($(element).text()).select();
+  document.execCommand("copy");
+  $temp.remove();
+}
 
 $(document).ready(function(){
 
     $('#popularnewreleases').click(function(){
         scrubinputs()
-        $('#minpopularityrating').val("3.5")
+        $('#minpopularityrating').val("85")
+        $('#mindifficultyrating').val("0.1")
         $('#daysold').val("10")
         $('#search').trigger("click")
     });
 
     $('#neweasymaps').click(function(){
         scrubinputs()
-        $('#minpopularityrating').val("1")
+        $('#minpopularityrating').val("70")
         $('#daysold').val("10")
+        $('#mindifficultyrating').val("0.1")
         $('#maxdifficultyrating').val("3")
         $('#orderby').val("difficultyrating")
         $('#order').val("asc")
@@ -231,7 +248,7 @@ $(document).ready(function(){
 
     $('#newmoderatemaps').click(function(){
         scrubinputs()
-        $('#minpopularityrating').val("1")
+        $('#minpopularityrating').val("70")
         $('#daysold').val("10")
         $('#mindifficultyrating').val("3")
         $('#maxdifficultyrating').val("6")
@@ -242,7 +259,7 @@ $(document).ready(function(){
 
     $('#newhardmaps').click(function(){
         scrubinputs()
-        $('#minpopularityrating').val("1")
+        $('#minpopularityrating').val("70")
         $('#daysold').val("10")
         $('#mindifficultyrating').val("6")
         $('#maxdifficultyrating').val("10")
@@ -253,7 +270,7 @@ $(document).ready(function(){
 
     $('#newinsanemaps').click(function(){
         scrubinputs()
-        $('#minpopularityrating').val("1")
+        $('#minpopularityrating').val("70")
         $('#daysold').val("10")
         $('#mindifficultyrating').val("10")
         $('#orderby').val("difficultyrating")
@@ -271,7 +288,7 @@ $(document).ready(function(){
 
     $('#alltimepopular').click(function(){
         scrubinputs()
-        $('#minpopularityrating').val("9")
+        $('#minpopularityrating').val("90")
         $('#orderby').val("popularityrating")
         $('#order').val("desc")
         $('#search').trigger("click")
@@ -279,6 +296,7 @@ $(document).ready(function(){
 
     $('#alltimedifficult').click(function(){
         scrubinputs()
+        $('#minpopularityrating').val("70")
         $('#mindifficultyrating').val("9")
         $('#orderby').val("difficultyrating")
         $('#order').val("desc")
@@ -377,20 +395,30 @@ $(document).ready(function(){
 
         card.appendChild(cardhead)
         card.appendChild(cardbody)
-        document.getElementById("content").innerHTML = ""
 
+        const content = document.getElementById("content")
+        content.innerHTML = ""
         content.appendChild(card)
 
         $.ajax({
             url: "songs.html",
             success: function(result){
-            $("#content").html(result);
+                $("#content").html(result);
             },
             error: function (xhr, ajaxOptions, thrownError) {
-            $("#content").html(xhr.responseText)
-          }
+                $("#content").html(xhr.responseText)
+            }
         });
 
+        $(document).ajaxStop(function () {
+            setTimeout(
+              function()
+              {
+                $('[data-toggle="tooltip"]').tooltip()
+              }, 2000);
+
+
+        });
 
 
 

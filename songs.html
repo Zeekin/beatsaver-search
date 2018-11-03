@@ -5,6 +5,7 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 -->
+
 <script type="application/javascript">
     var request = new XMLHttpRequest();
 
@@ -36,7 +37,59 @@
       const songs = document.getElementById('songs');
       const songlist = document.createElement('div');
 
-      if(data.length == 0){
+
+      if (request.status >= 200 && request.status < 400) {
+
+        var songdict = {};
+        var songidorder = [];
+
+        data.forEach(song => {
+
+            if (! songidorder.includes(song.id)){
+                songidorder.push(song.id)
+            }
+
+
+            if (song.id in songdict) {
+
+                difficulties = songdict[song.id]['difficulties']
+                difficultyratings = songdict[song.id]['difficultyratings']
+
+                difficulties.push(song.difficulty)
+                difficultyratings.push(song.difficultyrating)
+
+                songdict[song.id]['difficulties'] = difficulties
+                songdict[song.id]['difficultyratings'] = difficultyratings
+
+
+            } else {
+
+                songdict[song.id] = {
+
+                    "songname" : song.songname,
+                    "author" : song.author,
+                    "coverurl" : song.coverurl,
+                    "difficulties" : [song.difficulty],
+                    "difficultyratings" : [song.difficultyrating],
+                    "downloadurl" : song.downloadurl,
+                    "popularityrating" : song.popularityrating,
+                    "songsubname" : song.songsubname,
+                    "upvotes" : song.upvotes,
+                    "downvotes" : song.downvotes,
+                    "completionratio" : song.completionratio,
+                    "daysold" : song.daysold,
+                    "id" : song.id
+
+                }
+
+            }
+
+
+        })
+
+    var resultsize = Object.keys(songdict).length
+
+    if(resultsize == 0){
 
           const heading = document.createElement('h1')
           heading.textContent = "No Results Found"
@@ -45,134 +98,209 @@
       }
 
       const resultcount = document.getElementById('resultcount');
-      resultcount.textContent = data.length + " Results"
+      resultcount.textContent = resultsize + " Results"
 
 
-      if (request.status >= 200 && request.status < 400) {
 
-        data.forEach(song => {
+        songidorder.forEach(songid => {
 
-        const row = document.createElement('div');
-        row.setAttribute('class', 'row');
+            song = songdict[songid]
 
-        // create the content in the first column
+            const row = document.createElement('div');
+            row.setAttribute('class', 'row');
 
-        const col_1 = document.createElement('div');
-        col_1.setAttribute('class','col-2');
-        col_1.setAttribute('style','text-align: center');
+            // create the content in the first column
 
-        // create cover object
+            const col_1 = document.createElement('div');
+            col_1.setAttribute('class','col-2');
+            col_1.setAttribute('style','text-align: center');
 
-        const cover = document.createElement('img');
-        cover.src = song.coverurl;
-        cover.setAttribute('width','100%')
-        col_1.appendChild(cover);
-        col_1.appendChild(document.createElement('hr'));
+            // create cover object
 
-        // create download button object
+            const cover = document.createElement('img');
+            cover.src = song['coverurl'];
+            cover.setAttribute('width','100%')
+            col_1.appendChild(cover);
+            col_1.appendChild(document.createElement('hr'));
 
-        const dlbtn = document.createElement('a')
-        dlbtn.setAttribute('type','button')
-        dlbtn.setAttribute('href',song.downloadurl)
-        dlbtn.setAttribute('class','btn btn-link')
-        dlbtn.textContent = 'Download'
+            // create h3 object
 
-        col_1.appendChild(dlbtn)
-
-        row.appendChild(col_1)
-
-        // create the second column
-
-        const col_2 = document.createElement('div');
-        col_2.setAttribute('class','col');
-
-        // Add the songname
-
-        const songname = document.createElement('h2')
-        songname.textContent = song.songname + '  '
-        col_2.append(songname)
-
-        // Add the difficulty
-
-        const difficulty = document.createElement('span')
-        difficulty.setAttribute('class','badge badge-secondary')
-        difficulty.textContent = song.difficulty
-        songname.appendChild(difficulty)
+            const dlh3 = document.createElement('h3');
 
 
-        // Add the songsubname
+            // create download button object
 
-        const songsubname = document.createElement('h5')
-        songsubname.textContent = song.songsubname
-        col_2.append(songsubname)
+            const dlbtn = document.createElement('a')
+            dlbtn.setAttribute('type','button')
+            dlbtn.setAttribute('href',song['downloadurl'])
+            dlbtn.setAttribute('class','btn btn-link')
+            dlbtn.textContent = 'Download'
 
-        col_2.append(document.createElement('hr'))
+            dlh3.appendChild(dlbtn)
 
+            // create bsr link object
+            const bsrlink = document.createElement('a');
+            bsrlink.setAttribute('class','badge badge-info')
+            bsrlink.setAttribute('href','javascript:;')
+            bsrlink.setAttribute('style','padding-top:8px;padding-bottom:8px')
+            bsrlink.setAttribute('data-toggle','tooltip')
+            bsrlink.setAttribute('data-placement','top')
+            bsrlink.setAttribute('title','Copy to clipboard')
+            bsrlink.setAttribute('onclick','copytxt(this)')
 
-        // Add the author
-        const author = document.createElement('p')
-        author.textContent = 'Mapped by: ' + song.author
-        col_2.appendChild(author)
+            bsrlink.textContent = '!bsr ' + song['id']
 
-        // Add the difficulty rating
-        // TODO: Make this look good
+            dlh3.innerHTML = dlh3.innerHTML + "&nbsp;"
 
-        const difficultyrating = document.createElement('p')
-        difficultyrating.textContent = 'Difficulty Rating: ' + song.difficultyrating
-        col_2.append(difficultyrating)
+            dlh3.appendChild(bsrlink)
 
-        // create inner row
+            col_1.appendChild(dlh3)
 
-        const innerrow = document.createElement('div')
-        innerrow.setAttribute('class','row')
+            row.appendChild(col_1)
 
-        // Add popularity rating
+            // create the second column
 
-        const popularityrating = document.createElement('div')
-        popularityrating.setAttribute('class','col')
-        const prp = document.createElement('p')
-        prp.textContent = 'Popularity Rating: ' + song.popularityrating
-        popularityrating.appendChild(prp)
-        innerrow.appendChild(popularityrating)
+            const col_2 = document.createElement('div');
+            col_2.setAttribute('class','col');
 
-        // Add completion ratio
+            // Add the songname
 
-        const completionratio = document.createElement('div')
-        completionratio.setAttribute('class','col')
-        const crp = document.createElement('p')
-        crp.textContent = 'Player Completion: ' + (Math.round(song.completionratio * 10000)/100) + '%'
-        completionratio.appendChild(crp)
-        innerrow.appendChild(completionratio)
-
-        // Add up/down votes
-
-        const updownvotes = document.createElement('div')
-        updownvotes.setAttribute('class','col')
-        const udvp = document.createElement('p')
-        udvp.innerHTML = '<p><i class="fas fa-thumbs-up"></i>&nbsp;&nbsp;'+song.upvotes+'&nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-thumbs-down"></i>&nbsp;&nbsp;'+song.downvotes+'</p>'
-        updownvotes.appendChild(udvp)
-        innerrow.appendChild(updownvotes)
-
-        // Add days old
-
-        const daysold = document.createElement('div')
-        daysold.setAttribute('class','col')
-        const dop = document.createElement('p')
-        dop.textContent = 'Days Old: ' + song.daysold
-        daysold.appendChild(dop)
-        innerrow.appendChild(daysold)
+            const songname = document.createElement('h2')
+            songname.textContent = song['songname'] + '  '
+            col_2.append(songname)
 
 
-        col_2.appendChild(innerrow)
 
-        // Add the 2nd column to the row
 
-        row.appendChild(col_2)
+            // Add the songsubname
 
-        // add the row to the songs div
+            const songsubname = document.createElement('h5')
+            songsubname.textContent = song['songsubname']
+            col_2.append(songsubname)
 
-        songlist.appendChild(row)
-        songlist.appendChild(document.createElement('hr'))
+            col_2.append(document.createElement('hr'))
+
+
+            // Add the author
+            const author = document.createElement('p')
+            author.textContent = 'Mapped by: ' + song['author']
+            col_2.appendChild(author)
+
+            // Add the difficulty rating
+
+            for (var i = 0; i < song['difficultyratings'].length; i++) {
+
+                // Add the difficulty
+
+                const difficulty = document.createElement('span')
+                difficulty.setAttribute('class','badge badge-secondary')
+                difficulty.setAttribute('style','vertical-align: middle;line-height: 20px;margin-bottom:10px;margin-top:10px')
+                difficulty.textContent = song['difficulties'][i]
+                // songname.appendChild(difficulty)
+
+
+                const difficultyrow = document.createElement('div')
+                difficultyrow.setAttribute('class','row')
+                const difficultytxt = document.createElement('div')
+                // difficultytxt.textContent = 'Difficulty: '
+                difficultytxt.setAttribute('class','col-md-1')
+                // difficultytxt.setAttribute('style','vertical-align: middle;line-height: 40px;padding-bottom:10px')
+                difficultytxt.appendChild(difficulty)
+                difficultyrow.appendChild(difficultytxt)
+                const starcol = document.createElement('div')
+                starcol.setAttribute('class','col-md')
+
+                //data-toggle="tooltip" data-placement="bottom" title="(Notecount - Dotnotes) / Song Length (seconds) * (1 - Player Completion Percentage)"
+
+
+
+                const stardiv = document.createElement('div')
+                var diffrating = song['difficultyratings'][i]
+                if (diffrating > 15){
+                    diffrating = 15
+                }
+                const stardivwidth = 600 / 15 * diffrating
+                stardiv.setAttribute('style','position: absolute; top: 0; left:0;padding-bottom:10px;overflow:hidden;width:'+stardivwidth+'px')
+
+                const starimg = document.createElement('img')
+                starimg.setAttribute('src','starssmall.png')
+                starimg.setAttribute('data-toggle','tooltip')
+                starimg.setAttribute('data-placement','bottom')
+                starimg.setAttribute('title','Difficulty Rating ' + song['difficultyratings'][i])
+
+                const blackstarimg = document.createElement('img')
+                blackstarimg.setAttribute('src','blackstars.png')
+                blackstarimg.setAttribute('data-toggle','tooltip')
+                blackstarimg.setAttribute('data-placement','bottom')
+                blackstarimg.setAttribute('title','Difficulty Rating ' + song['difficultyratings'][i])
+
+                const blackstardiv = document.createElement('div')
+                blackstardiv.setAttribute('style','position: absolute; top: 0; left:0;padding-bottom:10px;overflow:hidden')
+
+                blackstardiv.appendChild(blackstarimg)
+
+                stardiv.appendChild(starimg)
+
+                starcol.appendChild(blackstardiv)
+                starcol.appendChild(stardiv)
+                difficultyrow.appendChild(starcol)
+
+                col_2.appendChild(difficultyrow)
+            }
+
+            // create inner row
+
+            const innerrow = document.createElement('div')
+            innerrow.setAttribute('class','row')
+
+            // Add popularity rating
+
+            const popularityrating = document.createElement('div')
+            popularityrating.setAttribute('class','col')
+            const prp = document.createElement('p')
+            prp.textContent = 'Popularity Rating: ' + Math.round(song['popularityrating']) + '%'
+            popularityrating.appendChild(prp)
+            innerrow.appendChild(popularityrating)
+
+            // Add completion ratio
+
+            const completionratio = document.createElement('div')
+            completionratio.setAttribute('class','col')
+            const crp = document.createElement('p')
+            crp.textContent = 'Player Completion: ' + (Math.round(song['completionratio'] * 10000)/100) + '%'
+            completionratio.appendChild(crp)
+            innerrow.appendChild(completionratio)
+
+            // Add up/down votes
+
+            const updownvotes = document.createElement('div')
+            updownvotes.setAttribute('class','col')
+            const udvp = document.createElement('p')
+            udvp.innerHTML = '<p><i class="fas fa-thumbs-up"></i>&nbsp;&nbsp;'+song['upvotes']+'&nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-thumbs-down"></i>&nbsp;&nbsp;'+song['downvotes']+'</p>'
+            updownvotes.appendChild(udvp)
+            innerrow.appendChild(updownvotes)
+
+            // Add days old
+
+            const daysold = document.createElement('div')
+            daysold.setAttribute('class','col')
+            const dop = document.createElement('p')
+            dop.textContent = 'Days Old: ' + song['daysold']
+            daysold.appendChild(dop)
+            innerrow.appendChild(daysold)
+
+
+            col_2.appendChild(innerrow)
+
+            // Add the 2nd column to the row
+
+            row.appendChild(col_2)
+
+            // add the row to the songs div
+
+            songlist.appendChild(row)
+            songlist.appendChild(document.createElement('hr'))
+
         });
 
         document.getElementById("songs").innerHTML = ""
@@ -183,7 +311,9 @@
       }
     }
 
+
     request.send();
+
 </script>
 
 <body>
@@ -200,4 +330,5 @@
 </div>
 
 </body>
+
 </html>

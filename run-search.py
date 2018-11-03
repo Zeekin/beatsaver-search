@@ -71,7 +71,7 @@ def search_for_song_with_params(event, context):
 
 
     selectstatement = """
-            select songname,author,coverurl, difficulty, difficultyrating, downloadurl,popularityrating,songsubname,upvotes,downvotes,completionratio,daysold from songs
+            select songname,author,coverurl, difficulty, difficultyrating, downloadurl,popularityrating,songsubname,upvotes,downvotes,completionratio,daysold,id from songs
             {}
             {}
         """.format(wherestatement,orderby)
@@ -91,7 +91,8 @@ def search_for_song_with_params(event, context):
             "upvotes" : song[8],
             "downvotes" : song[9],
             "completionratio" : song[10],
-            "daysold" : song[11]
+            "daysold" : song[11],
+            "id" : song[12]
         })
     print(body)
     return {

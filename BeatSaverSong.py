@@ -1,6 +1,26 @@
 import datetime
 from datetime import datetime
 
+class AuthorApprovalRating():
+
+    def __init__(self, authorname, upvotes, downvotes, newestmapage, mapcount):
+        self.authorname = authorname
+        self.upvotes = upvotes
+        self.downvotes = downvotes
+        self.approvalrating = self.approval_rating()
+        self.newestmapage = newestmapage
+        self.mapcount = mapcount
+        self.avgmapvotes = self.avg_map_votes()
+
+    def approval_rating(self):
+        return (self.upvotes + 5) / (self.upvotes + self.downvotes + 10)
+
+    def avg_map_votes(self):
+        return (self.upvotes - self.downvotes) / self.mapcount
+
+
+
+
 class BeatSaverSong():
 
     def __init__(self, id, key, name, description, uploader, uploaderid, songname, songsubname, author, bpm,
@@ -52,9 +72,11 @@ class BeatSaverSong():
 
         totalnotes = self.notes - self.dotnotes
 
-        difficultyrating = round(totalnotes / self.songlength * (1-self.completionratio),2)
-
-        return difficultyrating
+        difficultyrating = round(totalnotes / self.songlength * (1-(self.completionratio * 0.33)),2)
+        if difficultyrating < 0.5 and difficultyrating != 0:
+            return 0.5
+        else:
+            return difficultyrating
 
     def age_in_days(self):
         created = self.creationdate.split(' ')[0]
@@ -79,7 +101,7 @@ class BeatSaverSong():
     def popularity_rating(self):
         upvotes = 5 + self.upvotes
         downvotes = 5 + self.downvotes
-        rating = upvotes / downvotes
+        rating = upvotes / (upvotes + downvotes) * 100
 
         return rating
 
@@ -87,6 +109,11 @@ class BeatSaverSong():
         if self.downloadcount == 0:
             return 0
         else:
-            return self.finishedcount / self.downloadcount
+            ratio = self.finishedcount / self.downloadcount
+            if ratio > 1:
+                return 1
+            else:
+                return ratio
+
 
 
