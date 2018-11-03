@@ -1,7 +1,8 @@
 import requests
 import simplejson as json
-from BeatSaverSong import BeatSaverSong
+from BeatSaverSong import BeatSaverSong, AuthorApprovalRating
 from psycopg2 import connect
+import re
 
 api_url = "https://beatsaver.com/api/songs/detail/2435"
 
@@ -39,7 +40,10 @@ def search_for_song_with_params(event, context):
             queries.append("lower(songsubname) like lower('%" + queryparams['songsubname'] + "%')")
 
         if 'author' in queryparams:
-            queries.append("lower(author) like lower('%" + queryparams['author'] + "%')")
+            queries.append("lower(author) = lower('" + re.escape(queryparams['author'].replace("'",'"')) + "')")
+
+        if 'uploader' in queryparams:
+            queries.append("lower(uploader) = lower('" + re.escape(queryparams['uploader'].replace("'",'"')) + "')")
 
         if 'difficulty' in queryparams:
             queries.append("lower(difficulty) = lower('" + queryparams['difficulty'] +"')")
@@ -52,6 +56,7 @@ def search_for_song_with_params(event, context):
 
         if 'minpopularityrating' in queryparams:
             queries.append("popularityrating >= {}".format(queryparams['minpopularityrating']))
+
 
         if 'maxpopularityrating' in queryparams:
             queries.append("popularityrating <= {}".format(queryparams['maxpopularityrating']))
@@ -94,7 +99,6 @@ def search_for_song_with_params(event, context):
             "daysold" : song[11],
             "id" : song[12]
         })
-    print(body)
     return {
         "statusCode": 200,
         "headers" : {
@@ -102,6 +106,105 @@ def search_for_song_with_params(event, context):
         },
         "body": json.dumps(body)
     }
+
+def get_author_songs(authorname):
+    songs = search_for_song_with_params({
+        "queryStringParameters" : {
+            "uploader" : authorname
+        }
+    },"a")
+
+    songlist = []
+    unfilteredsonglist = json.loads(songs['body'])
+    for song in  unfilteredsonglist:
+        if song['songname'] not in [song['songname'] for song in songlist]:
+            songlist.append(song)
+
+
+
+    return songlist
+
+def get_all_author_stats(event,context):
+
+    conn = connect(dbname=database, user=username, host=db_endpoint,port=db_port, password=password)
+    cursor = conn.cursor()
+    selectstatement = """
+            select * from authorstats
+            order by totalupvotes desc
+        """
+    cursor.execute(selectstatement)
+    data = cursor.fetchall()
+    body = []
+    for author in data:
+        body.append({
+            "name" : author[0],
+            "upvotes" : author[1],
+            "downvotes" : author[2],
+            "approvalrating" : author[3],
+            "newestmapage": author[4],
+            "mapcount": author[5],
+            "avgmapvotes": author[6]
+        })
+
+
+    return {
+        "statusCode": 200,
+        "headers" : {
+            "Access-Control-Allow-Origin" : "*"
+        },
+        "body": json.dumps(body)
+    }
+
+def get_all_author_approval_ratings():
+    authorstats = []
+    authors = get_author_list()
+    print("#{} unique authors found. Beginning parsing.".format(len(authors)))
+    authorcount = 0
+    for author in authors:
+        authorcount += 1
+        print("Parsing author #{}".format(authorcount))
+        if author != "":
+            authorsongs = get_author_songs(author)
+            upvotes = 0
+            downvotes = 0
+            newestmapage = 1000
+            mapcount = len(authorsongs)
+            for song in authorsongs:
+                if song['daysold'] < newestmapage:
+                    newestmapage = song['daysold']
+                upvotes += song['upvotes']
+                downvotes += song['downvotes']
+            authorar = AuthorApprovalRating(author, upvotes, downvotes, newestmapage, mapcount)
+            authorstats.append(authorar)
+
+    return authorstats
+
+
+
+
+
+def upload_all_author_stats_to_beatsaver():
+    conn = connect(dbname=database, user=username, host=db_endpoint,port=db_port, password=password)
+    cursor = conn.cursor()
+
+    replacestatement = """
+            INSERT INTO  "public"."authorstats" ("author", "totalupvotes","totaldownvotes", "approvalrating","newestmapage","mapcount","avgmapvotes") values (%s, %s, %s, %s, %s, %s, %s) 
+            ON CONFLICT (author) DO UPDATE 
+            SET totalupvotes = %s, totaldownvotes = %s, approvalrating = %s, newestmapage = %s, mapcount = %s, avgmapvotes = %s
+        """
+
+    authorratings = get_all_author_approval_ratings()
+
+    for authorrating in authorratings:
+        cursor.execute(replacestatement, (authorrating.authorname,authorrating.upvotes, authorrating.downvotes,
+                                          authorrating.approvalrating,authorrating.newestmapage,authorrating.mapcount,authorrating.avgmapvotes,authorrating.upvotes,authorrating.downvotes,
+                                          authorrating.approvalrating,authorrating.newestmapage,authorrating.mapcount,authorrating.avgmapvotes))
+
+    conn.commit()
+
+    return "Done"
+
+
 
 
 def get_my_songs(event, context):
@@ -283,6 +386,20 @@ def get_songs_starting_from(songnum):
 
     return songs
 
+def get_author_list():
+    authors = []
+    conn = connect(dbname=database, user=username, host=db_endpoint,port=db_port, password=password)
+    cursor = conn.cursor()
+    selectstatement = """
+        select distinct uploader from songs        
+    """
+    cursor.execute(selectstatement)
+    data = cursor.fetchall()
+
+    for author in data:
+        authors.append(author[0])
+
+    return authors
 
 def count_total_beatsaver_songs():
     api_url = "https://beatsaver.com/api/songs/new/"
@@ -293,17 +410,59 @@ def count_total_beatsaver_songs():
 
     return total_songs
 
+def get_official_mappers():
+    with open("officialmappers.txt","r") as file:
+        content = file.readlines()
+    mapperlist = []
+    for mapper in content:
+        mapperlist.append(mapper.strip())
+    return mapperlist
+
+def dodgy_writer():
+
+    mappers = get_official_mappers()
+
+    zeek = get_all_author_stats("a","b")
+    auths = json.loads(zeek['body'])
+    count = 0
+    with open("rawhtml.txt","w") as file:
+        for auth in auths:
+
+            name = auth['name']
+
+
+
+            count += 1
+            if count > 500:
+                break
+            file.write("<tr>\n")
+            file.write("<th scope=\"row\">{}</th>\n".format(count))
+            if name in mappers:
+                file.write('<td style="background: green"><p style="color:white"><b>{}</b></p></td>'.format(name))
+            else:
+                file.write('<td><p>{}</p></td>'.format(name))
+
+            file.write("<td>{}</td>".format(auth['upvotes']))
+            file.write("<td>{}</td>".format(auth['downvotes']))
+            file.write("<td>{}%</td>".format(int(float(auth['approvalrating']) * 100)))
+            file.write("<td>{}</td>".format(auth['avgmapvotes']))
+            file.write("<td>{}</td>".format(auth['mapcount']))
+            file.write("<td>{}</td>".format(auth['newestmapage']))
+            file.write("</tr>")
+    #<tr>
+    #    <th scope="row">zeekin</th>
+    #    <td>#up</td>
+    #    <td>#down</td>
+    #    <td>apr rating</td>
+    #</tr>
 
 
 if __name__ == "__main__":
-    #get_my_songs("a","b")
-    #search_for_song_with_params({
-    #    "queryStringParameters" : {
-    #        "songname" : "RED",
-    #        "orderby" : "difficultyrating",
-    #        "order" : "desc",
-    #        "maxdifficultyrating": 15,
-    #        "mindifficultyrating": 2
-    #    }
-    #},"a")
+    #dodgy_writer()
     add_all_beatsaver_songs_to_database()
+    #upload_all_author_stats_to_beatsaver()
+    #songs = get_author_songs("freeek")
+    #for song in songs:
+    #    print("Songname: {}, downvotes: {}".format(song['songname'],song['downvotes']))
+
+
